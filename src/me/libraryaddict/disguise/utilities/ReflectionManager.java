@@ -26,6 +26,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import org.bukkit.potion.PotionEffect;
 
 public class ReflectionManager {
 
@@ -223,6 +224,20 @@ public class ReflectionManager {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static Object createMobEffect(int id, int duration, int amplification, boolean ambient, boolean particles) {
+        try {
+            return getNmsClass("MobEffect").getConstructor(int.class, int.class, int.class, boolean.class, boolean.class)
+                    .newInstance(id, duration, amplification, ambient, particles);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Object createMobEffect(PotionEffect effect) {
+        return createMobEffect(effect.getType().getId(), effect.getDuration(), effect.getAmplifier(), effect.isAmbient(), effect.hasParticles());
     }
 
     private static String dir2fqn(String s) {

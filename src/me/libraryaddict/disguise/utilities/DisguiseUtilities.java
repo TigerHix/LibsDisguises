@@ -23,13 +23,9 @@ import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.EndermanWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.ItemFrameWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.MinecartWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
-import me.libraryaddict.disguise.utilities.ReflectionManager.LibVersion;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -41,6 +37,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -916,10 +913,11 @@ public class DisguiseUtilities {
             }
 
             // Resend any active potion effects
-            for (Object potionEffect : player.getActivePotionEffects()) {
+            for (PotionEffect potionEffect : player.getActivePotionEffects()) {
+                Object mobEffect = ReflectionManager.createMobEffect(potionEffect);
                 sendSelfPacket(player,
-                        manager.createPacketConstructor(PacketType.Play.Server.ENTITY_EFFECT, player.getEntityId(), potionEffect)
-                                .createPacket(player.getEntityId(), potionEffect));
+                        manager.createPacketConstructor(PacketType.Play.Server.ENTITY_EFFECT, player.getEntityId(), mobEffect)
+                                .createPacket(player.getEntityId(), mobEffect));
             }
         } catch (Exception ex) {
             ex.printStackTrace();
