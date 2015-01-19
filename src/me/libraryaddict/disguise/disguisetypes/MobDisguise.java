@@ -1,14 +1,13 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import java.security.InvalidParameterException;
-
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
-
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+
+import java.security.InvalidParameterException;
 
 public class MobDisguise extends TargetedDisguise {
 

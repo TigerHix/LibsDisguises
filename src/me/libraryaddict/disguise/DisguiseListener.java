@@ -1,10 +1,7 @@
 package me.libraryaddict.disguise;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Random;
-
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketContainer;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
@@ -13,7 +10,6 @@ import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 import me.libraryaddict.disguise.utilities.UpdateChecker;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -25,19 +21,15 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketContainer;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Random;
 
 public class DisguiseListener implements Listener {
 
@@ -263,14 +255,14 @@ public class DisguiseListener implements Listener {
         if (DisguiseConfig.isMonstersIgnoreDisguises() && event.getTarget() != null && event.getTarget() instanceof Player
                 && DisguiseAPI.isDisguised(event.getTarget())) {
             switch (event.getReason()) {
-            case TARGET_ATTACKED_ENTITY:
-            case TARGET_ATTACKED_OWNER:
-            case OWNER_ATTACKED_TARGET:
-            case CUSTOM:
-                break;
-            default:
-                event.setCancelled(true);
-                break;
+                case TARGET_ATTACKED_ENTITY:
+                case TARGET_ATTACKED_OWNER:
+                case OWNER_ATTACKED_TARGET:
+                case CUSTOM:
+                    break;
+                default:
+                    event.setCancelled(true);
+                    break;
             }
         }
     }

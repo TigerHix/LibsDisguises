@@ -1,8 +1,8 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import java.util.Random;
-
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+
+import java.util.Random;
 
 public class SlimeWatcher extends LivingWatcher {
 

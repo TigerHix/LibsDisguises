@@ -1,9 +1,9 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import java.util.Random;
-
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.RabbitType;
+
+import java.util.Random;
 
 public class RabbitWatcher extends AgeableWatcher {
 

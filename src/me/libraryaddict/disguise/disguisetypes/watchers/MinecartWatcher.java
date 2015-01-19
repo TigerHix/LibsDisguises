@@ -1,9 +1,8 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import org.bukkit.inventory.ItemStack;
-
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+import org.bukkit.inventory.ItemStack;
 
 public class MinecartWatcher extends FlagWatcher {
 

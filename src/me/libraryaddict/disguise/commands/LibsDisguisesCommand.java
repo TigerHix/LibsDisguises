@@ -14,7 +14,7 @@ public class LibsDisguisesCommand implements CommandExecutor {
                 + "This server is running "
                 + "Lib's Disguises "
                 + (sender.getName().equals("libraryaddict") ? "v"
-                        + Bukkit.getPluginManager().getPlugin("LibsDisguises").getDescription().getVersion() + " " : "")
+                + Bukkit.getPluginManager().getPlugin("LibsDisguises").getDescription().getVersion() + " " : "")
                 + "by libraryaddict");
         return true;
     }

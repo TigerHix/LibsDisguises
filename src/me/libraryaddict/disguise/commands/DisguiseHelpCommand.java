@@ -1,18 +1,11 @@
 package me.libraryaddict.disguise.commands;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.RabbitType;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.BaseDisguiseCommand;
-
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.block.BlockFace;
@@ -20,6 +13,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 
 public class DisguiseHelpCommand extends BaseDisguiseCommand {
     private class EnumHelp {
@@ -123,7 +122,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        for (String node : new String[] { "disguise", "disguiseradius", "disguiseentity", "disguiseplayer" }) {
+        for (String node : new String[]{"disguise", "disguiseradius", "disguiseentity", "disguiseplayer"}) {
             HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> permMap = getPermissions(sender, "libsdisguises." + node
                     + ".");
             if (!permMap.isEmpty()) {

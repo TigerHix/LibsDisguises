@@ -1,23 +1,6 @@
 package me.libraryaddict.disguise.utilities;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map.Entry;
-
-import me.libraryaddict.disguise.disguisetypes.AnimalColor;
-import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
-import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
-import me.libraryaddict.disguise.disguisetypes.MobDisguise;
-import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
-import me.libraryaddict.disguise.disguisetypes.RabbitType;
-import me.libraryaddict.disguise.utilities.ReflectionManager.LibVersion;
-
+import me.libraryaddict.disguise.disguisetypes.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
@@ -29,6 +12,14 @@ import org.bukkit.entity.Monster;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.PotionEffectType;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 public abstract class BaseDisguiseCommand implements CommandExecutor {
 
@@ -60,30 +51,30 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
 
     protected HashMap<String, Boolean> getDisguisePermission(CommandSender sender, DisguiseType type) {
         switch (type) {
-        case PLAYER:
-        case FALLING_BLOCK:
-        case PAINTING:
-        case SPLASH_POTION:
-        case FISHING_HOOK:
-        case DROPPED_ITEM:
-            HashMap<String, Boolean> returns = new HashMap<String, Boolean>();
-            String beginning = "libsdisguises.options." + getClass().getSimpleName().toLowerCase().replace("command", "") + ".";
-            for (PermissionAttachmentInfo permission : sender.getEffectivePermissions()) {
-                String lowerPerm = permission.getPermission().toLowerCase();
-                if (lowerPerm.startsWith(beginning)) {
-                    String[] split = lowerPerm.substring(beginning.length()).split("\\.");
-                    if (split.length > 1) {
-                        if (split[0].replace("_", "").equals(type.name().toLowerCase().replace("_", ""))) {
-                            for (int i = 1; i < split.length; i++) {
-                                returns.put(split[i], permission.getValue());
+            case PLAYER:
+            case FALLING_BLOCK:
+            case PAINTING:
+            case SPLASH_POTION:
+            case FISHING_HOOK:
+            case DROPPED_ITEM:
+                HashMap<String, Boolean> returns = new HashMap<String, Boolean>();
+                String beginning = "libsdisguises.options." + getClass().getSimpleName().toLowerCase().replace("command", "") + ".";
+                for (PermissionAttachmentInfo permission : sender.getEffectivePermissions()) {
+                    String lowerPerm = permission.getPermission().toLowerCase();
+                    if (lowerPerm.startsWith(beginning)) {
+                        String[] split = lowerPerm.substring(beginning.length()).split("\\.");
+                        if (split.length > 1) {
+                            if (split[0].replace("_", "").equals(type.name().toLowerCase().replace("_", ""))) {
+                                for (int i = 1; i < split.length; i++) {
+                                    returns.put(split[i], permission.getValue());
+                                }
                             }
                         }
                     }
                 }
-            }
-            return returns;
-        default:
-            return new HashMap<String, Boolean>();
+                return returns;
+            default:
+                return new HashMap<String, Boolean>();
         }
     }
 
@@ -91,8 +82,8 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         Method[] methods = watcherClass.getMethods();
         methods = Arrays.copyOf(methods, methods.length + 4);
         int i = 4;
-        for (String methodName : new String[] { "setViewSelfDisguise", "setHideHeldItemFromSelf", "setHideArmorFromSelf",
-                "setHearSelfDisguise" }) {
+        for (String methodName : new String[]{"setViewSelfDisguise", "setHideHeldItemFromSelf", "setHideArmorFromSelf",
+                "setHearSelfDisguise"}) {
             try {
                 methods[methods.length - i--] = Disguise.class.getMethod(methodName, boolean.class);
             } catch (Exception ex) {
@@ -106,7 +97,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
      * Get perms for the node. Returns a hashmap of allowed disguisetypes and their options
      */
     protected HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> getPermissions(CommandSender sender,
-            String permissionNode) {
+                                                                                        String permissionNode) {
 
         HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> singleDisguises = new HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>>();
         HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> rangeDisguises = new HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>>();
@@ -296,7 +287,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
      * disguise has been feed a proper disguisetype.
      */
     protected Disguise parseDisguise(CommandSender sender, String[] args,
-            HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map) throws DisguiseParseException,
+                                     HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map) throws DisguiseParseException,
             IllegalAccessException, InvocationTargetException {
         if (map.isEmpty()) {
             throw new DisguiseParseException(ChatColor.RED + "You are forbidden to use this command.");
@@ -354,7 +345,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 } else {
                     if (!disguiseOptions.isEmpty()
                             && (!disguiseOptions.containsKey(args[1].toLowerCase()) || !disguiseOptions
-                                    .get(args[1].toLowerCase()))) {
+                            .get(args[1].toLowerCase()))) {
                         throw new DisguiseParseException(ChatColor.RED + "Error! You don't have permission to use that name!");
                     }
                     // Construct the player disguise
@@ -402,19 +393,19 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                         }
                         if (miscId != -1) {
                             switch (disguiseType) {
-                            case PAINTING:
-                            case FALLING_BLOCK:
-                            case SPLASH_POTION:
-                            case DROPPED_ITEM:
-                            case FISHING_HOOK:
-                            case ARROW:
-                            case SMALL_FIREBALL:
-                            case FIREBALL:
-                            case WITHER_SKULL:
-                                break;
-                            default:
-                                throw new DisguiseParseException(ChatColor.RED + "Error! " + disguiseType.toReadable()
-                                        + " doesn't know what to do with " + args[1] + "!");
+                                case PAINTING:
+                                case FALLING_BLOCK:
+                                case SPLASH_POTION:
+                                case DROPPED_ITEM:
+                                case FISHING_HOOK:
+                                case ARROW:
+                                case SMALL_FIREBALL:
+                                case FIREBALL:
+                                case WITHER_SKULL:
+                                    break;
+                                default:
+                                    throw new DisguiseParseException(ChatColor.RED + "Error! " + disguiseType.toReadable()
+                                            + " doesn't know what to do with " + args[1] + "!");
                             }
                             toSkip++;
                             // If they also defined a data value

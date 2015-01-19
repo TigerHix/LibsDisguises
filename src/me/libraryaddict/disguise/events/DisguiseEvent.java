@@ -1,7 +1,6 @@
 package me.libraryaddict.disguise.events;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;

@@ -7,7 +7,6 @@
 
 	<build>
 		<sourceDirectory>src</sourceDirectory>
-		<testSourceDirectory>test</testSourceDirectory>
 		<defaultGoal>clean package</defaultGoal>
 		<directory>target</directory>
 		<finalName>LibsDisguises</finalName>
@@ -104,4 +103,5 @@
 			<url>http://repo.md-5.net/content/repositories/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
+
 </project>

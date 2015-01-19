@@ -1,11 +1,9 @@
 package me.libraryaddict.disguise.utilities;
 
+import org.bukkit.Sound;
+
 import java.util.HashMap;
 import java.util.HashSet;
-
-import me.libraryaddict.disguise.utilities.ReflectionManager.LibVersion;
-
-import org.bukkit.Sound;
 
 /**
  * Only living disguises go in here!
@@ -142,21 +140,21 @@ public enum DisguiseSound {
                 throw new RuntimeException("Was given a unknown object " + obj);
             }
             switch (i) {
-            case 0:
-                disguiseSounds.put(SoundType.HURT, s);
-                break;
-            case 1:
-                disguiseSounds.put(SoundType.STEP, s);
-                break;
-            case 2:
-                disguiseSounds.put(SoundType.DEATH, s);
-                break;
-            case 3:
-                disguiseSounds.put(SoundType.IDLE, s);
-                break;
-            default:
-                cancelSounds.add(s);
-                break;
+                case 0:
+                    disguiseSounds.put(SoundType.HURT, s);
+                    break;
+                case 1:
+                    disguiseSounds.put(SoundType.STEP, s);
+                    break;
+                case 2:
+                    disguiseSounds.put(SoundType.DEATH, s);
+                    break;
+                case 3:
+                    disguiseSounds.put(SoundType.IDLE, s);
+                    break;
+                default:
+                    cancelSounds.add(s);
+                    break;
             }
         }
     }

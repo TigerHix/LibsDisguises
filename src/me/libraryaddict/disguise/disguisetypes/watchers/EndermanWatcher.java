@@ -1,8 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import org.bukkit.inventory.ItemStack;
-
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import org.bukkit.inventory.ItemStack;
 
 public class EndermanWatcher extends LivingWatcher {
 

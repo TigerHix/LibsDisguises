@@ -1,7 +1,6 @@
 package me.libraryaddict.disguise;
 
 import me.libraryaddict.disguise.utilities.PacketsManager;
-
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 

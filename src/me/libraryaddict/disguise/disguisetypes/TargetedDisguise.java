@@ -1,13 +1,12 @@
 package me.libraryaddict.disguise.disguisetypes;
 
+import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import org.bukkit.entity.Player;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import me.libraryaddict.disguise.DisguiseAPI;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.ReflectionManager;
-import org.bukkit.entity.Player;
 
 public abstract class TargetedDisguise extends Disguise {
     public enum TargetType {

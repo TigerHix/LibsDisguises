@@ -1,18 +1,22 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import org.apache.commons.lang.Validate;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
-
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsProfileLookup;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
-import me.libraryaddict.disguise.utilities.ReflectionManager.LibVersion;
+import net.minecraft.server.v1_8_R1.*;
+import org.apache.commons.lang.Validate;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.Collection;
 
 public class PlayerDisguise extends TargetedDisguise {
+
     private LibsProfileLookup currentLookup;
     private WrappedGameProfile gameProfile;
     private String playerName;
@@ -184,9 +188,8 @@ public class PlayerDisguise extends TargetedDisguise {
 
     /**
      * Set the GameProfile, without tampering.
-     * 
-     * @param gameProfile
-     *            GameProfile
+     *
+     * @param gameProfile GameProfile
      * @return
      */
     public PlayerDisguise setSkin(WrappedGameProfile gameProfile) {
@@ -221,4 +224,71 @@ public class PlayerDisguise extends TargetedDisguise {
     public PlayerDisguise silentlyRemovePlayer(String playername) {
         return (PlayerDisguise) super.silentlyRemovePlayer(playername);
     }
+
+    public boolean removeDisguise() {
+        boolean boo = super.removeDisguise();
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                try {
+                    EntityTrackerEntry entry = (EntityTrackerEntry) ReflectionManager.getEntityTrackerEntry(PlayerDisguise.this.getEntity());
+                    for (Player player : LibsDisguises.instance().getServer().getOnlinePlayers()) {
+                        updatePlayer(entry, ((CraftPlayer) player).getHandle());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.runTaskLater(LibsDisguises.instance(), 2L);
+        return boo;
+    }
+
+    private static void updatePlayer(EntityTrackerEntry entry, EntityPlayer ep) {
+        if (ep != entry.tracker) {
+            ep.playerConnection.sendPacket(new PacketPlayOutEntityMetadata(entry.tracker.getId(), entry.tracker.getDataWatcher(), true));
+            if ((entry.tracker instanceof EntityLiving)) {
+                AttributeMapServer attributemapserver = (AttributeMapServer) ((EntityLiving) entry.tracker).getAttributeMap();
+                Collection collection = attributemapserver.c();
+                if (entry.tracker.getId() == ep.getId()) {
+                    ((EntityPlayer) entry.tracker).getBukkitEntity().injectScaledMaxHealth(collection, false);
+                }
+                if (!collection.isEmpty()) {
+                    ep.playerConnection.sendPacket(new PacketPlayOutUpdateAttributes(entry.tracker.getId(), collection));
+                }
+            }
+            entry.j = entry.tracker.motX;
+            entry.k = entry.tracker.motY;
+            entry.l = entry.tracker.motZ;
+            if (entry.tracker.vehicle != null) {
+                ep.playerConnection.sendPacket(new PacketPlayOutAttachEntity(0, entry.tracker, entry.tracker.vehicle));
+            }
+            if (((entry.tracker instanceof EntityInsentient)) && (((EntityInsentient) entry.tracker).getLeashHolder() != null)) {
+                ep.playerConnection.sendPacket(new PacketPlayOutAttachEntity(1, entry.tracker, ((EntityInsentient) entry.tracker).getLeashHolder()));
+            }
+            if ((entry.tracker instanceof EntityLiving)) {
+                for (int i = 0; i < 5; i++) {
+                    ItemStack itemstack = ((EntityLiving) entry.tracker).getEquipment(i);
+                    if (itemstack != null) {
+                        ep.playerConnection.sendPacket(new PacketPlayOutEntityEquipment(entry.tracker.getId(), i, itemstack));
+                    }
+                }
+            }
+            if ((entry.tracker instanceof EntityHuman)) {
+                EntityHuman entityhuman = (EntityHuman) entry.tracker;
+                if (entityhuman.isSleeping()) {
+                    ep.playerConnection.sendPacket(new PacketPlayOutBed(entityhuman, new BlockPosition(entry.tracker)));
+                }
+            }
+            entry.i = MathHelper.d(entry.tracker.getHeadRotation() * 256.0F / 360.0F);
+            entry.broadcast(new PacketPlayOutEntityHeadRotation(entry.tracker, (byte) entry.i));
+            if ((entry.tracker instanceof EntityLiving)) {
+                EntityLiving entityliving = (EntityLiving) entry.tracker;
+                for (Object o : entityliving.getEffects()) {
+                    MobEffect mobeffect = (MobEffect) o;
+                    ep.playerConnection.sendPacket(new PacketPlayOutEntityEffect(entry.tracker.getId(), mobeffect));
+                }
+            }
+        }
+    }
+
 }

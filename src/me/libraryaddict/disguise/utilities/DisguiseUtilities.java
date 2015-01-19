@@ -1,32 +1,22 @@
 package me.libraryaddict.disguise.utilities;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.UUID;
-import java.util.regex.Pattern;
-
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.reflect.StructureModifier;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+import com.google.common.collect.ForwardingSet;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
-import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
-import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
+import me.libraryaddict.disguise.disguisetypes.*;
+import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
-import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -37,18 +27,16 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.reflect.StructureModifier;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import com.comphenix.protocol.wrappers.WrappedGameProfile;
-import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 public class DisguiseUtilities {
     /**
@@ -60,13 +48,13 @@ public class DisguiseUtilities {
     private static LinkedHashMap<String, Disguise> clonedDisguises = new LinkedHashMap<String, Disguise>();
     /**
      * A hashmap of the uuid's of entitys, alive and dead. And their disguises in use
-     **/
-    private static HashMap<UUID, HashSet<TargetedDisguise>> disguisesInUse = new HashMap<UUID, HashSet<TargetedDisguise>>();
+     */
+    private static Map<UUID, HashSet<TargetedDisguise>> disguisesInUse = new ConcurrentHashMap<UUID, HashSet<TargetedDisguise>>();
     /**
      * Disguises which are stored ready for a entity to be seen by a player Preferably, disguises in this should only stay in for
      * a max of a second.
      */
-    private static HashMap<Integer, HashSet<TargetedDisguise>> futureDisguises = new HashMap<Integer, HashSet<TargetedDisguise>>();
+    private static Map<Integer, HashSet<TargetedDisguise>> futureDisguises = new ConcurrentHashMap<Integer, HashSet<TargetedDisguise>>();
     /**
      * A hashmap storing the uuid and skin of a playername
      */
@@ -99,7 +87,7 @@ public class DisguiseUtilities {
                     ReflectionManager.getNmsClass("IBlockData"));
             Method setSky = chunkSection.getClass().getMethod("a", int.class, int.class, int.class, int.class);
             Method setEmitted = chunkSection.getClass().getMethod("b", int.class, int.class, int.class, int.class);
-            for (BlockFace face : new BlockFace[] { BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH }) {
+            for (BlockFace face : new BlockFace[]{BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH}) {
                 setType.invoke(chunkSection, 1 + face.getModX(), 0, 1 + face.getModZ(), fromLegacyData.invoke(block, face.ordinal()));
                 setSky.invoke(chunkSection, 1 + face.getModX(), 0, 1 + face.getModZ(), 0);
                 setEmitted.invoke(chunkSection, 1 + face.getModX(), 0, 1 + face.getModZ(), 0);
@@ -257,7 +245,7 @@ public class DisguiseUtilities {
                         entityTrackerEntry);
                 HashSet cloned = (HashSet) trackedPlayers.clone();
                 PacketContainer destroyPacket = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
-                destroyPacket.getIntegerArrays().write(0, new int[] { disguise.getEntity().getEntityId() });
+                destroyPacket.getIntegerArrays().write(0, new int[]{disguise.getEntity().getEntityId()});
                 for (Object p : cloned) {
                     Player player = (Player) ReflectionManager.getBukkitEntity(p);
                     if (player == disguise.getEntity() || disguise.canSee(player)) {
@@ -280,7 +268,7 @@ public class DisguiseUtilities {
                 if (disguiseValues.getBabyBox() != null) {
                     if ((disguise.getWatcher() instanceof AgeableWatcher && ((AgeableWatcher) disguise.getWatcher()).isBaby())
                             || (disguise.getWatcher() instanceof ZombieWatcher && ((ZombieWatcher) disguise.getWatcher())
-                                    .isBaby())) {
+                            .isBaby())) {
                         disguiseBox = disguiseValues.getBabyBox();
                     }
                 }
@@ -306,7 +294,7 @@ public class DisguiseUtilities {
     public static PacketContainer[] getBedChunkPacket(Player player, Location newLoc, Location oldLoc) {
         int i = 0;
         PacketContainer[] packets = new PacketContainer[newLoc != null ? 2 + (oldLoc != null ? 1 : 0) : 1];
-        for (Location loc : new Location[] { oldLoc, newLoc }) {
+        for (Location loc : new Location[]{oldLoc, newLoc}) {
             if (loc == null) {
                 continue;
             }
@@ -359,7 +347,7 @@ public class DisguiseUtilities {
         ints.write(1, (int) Math.floor(loc.getX() * 32));
         ints.write(2, (int) Math.floor((PacketsManager.getYModifier(disguise.getEntity(), disguise) + loc.getY()) * 32));
         ints.write(3, (int) Math.floor(loc.getZ() * 32));
-        return new PacketContainer[] { setBed, teleport };
+        return new PacketContainer[]{setBed, teleport};
 
     }
 
@@ -385,15 +373,13 @@ public class DisguiseUtilities {
         }
         if (getDisguises().containsKey(entityId)) {
             for (TargetedDisguise disguise : getDisguises().get(entityId)) {
-                if (disguise.canSee(observer)) {
-                    return disguise;
-                }
+                return disguise;
             }
         }
         return null;
     }
 
-    public static HashMap<UUID, HashSet<TargetedDisguise>> getDisguises() {
+    public static Map<UUID, HashSet<TargetedDisguise>> getDisguises() {
         return disguisesInUse;
     }
 
@@ -405,7 +391,7 @@ public class DisguiseUtilities {
         return new TargetedDisguise[0];
     }
 
-    public static HashMap<Integer, HashSet<TargetedDisguise>> getFutureDisguises() {
+    public static Map<Integer, HashSet<TargetedDisguise>> getFutureDisguises() {
         return futureDisguises;
     }
 
@@ -465,8 +451,8 @@ public class DisguiseUtilities {
                 }
                 if (DisguiseAPI.isDisguiseInUse(disguise)
                         && (!gameProfile.getName().equals(
-                                disguise.getSkin() != null ? disguise.getSkin() : disguise.getName())
-                                    || !gameProfile.getProperties().isEmpty())) {
+                        disguise.getSkin() != null ? disguise.getSkin() : disguise.getName())
+                        || !gameProfile.getProperties().isEmpty())) {
                     disguise.setGameProfile(gameProfile);
                     DisguiseUtilities.refreshTrackers(disguise);
                 }
@@ -582,7 +568,7 @@ public class DisguiseUtilities {
      * version every single packet..
      */
     public static List<WrappedWatchableObject> rebuildForVersion(Player player, FlagWatcher watcher,
-            List<WrappedWatchableObject> list) {
+                                                                 List<WrappedWatchableObject> list) {
         if (true) // Use for future protocol compatibility
             return list;
         ArrayList<WrappedWatchableObject> rebuiltList = new ArrayList<WrappedWatchableObject>();
@@ -593,7 +579,7 @@ public class DisguiseUtilities {
                 continue;
             }
             switch (obj.getIndex()) {
-            // TODO: Future version support
+                // TODO: Future version support
             }
         }
         Iterator<WrappedWatchableObject> itel = backups.iterator();
@@ -729,13 +715,13 @@ public class DisguiseUtilities {
                 }
                 final Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
                 if (entityTrackerEntry != null) {
-                    HashSet trackedPlayers = (HashSet) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(
+                    ForwardingSet trackedPlayers = (ForwardingSet) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(
                             entityTrackerEntry);
                     Method clear = ReflectionManager.getNmsMethod("EntityTrackerEntry", "clear",
                             ReflectionManager.getNmsClass("EntityPlayer"));
                     final Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", "updatePlayer",
                             ReflectionManager.getNmsClass("EntityPlayer"));
-                    HashSet cloned = (HashSet) trackedPlayers.clone();
+                    HashSet cloned = new HashSet(trackedPlayers);
                     for (final Object p : cloned) {
                         Player player = (Player) ReflectionManager.getBukkitEntity(p);
                         if (disguise.getEntity() != player && disguise.canSee(player)) {
@@ -913,11 +899,10 @@ public class DisguiseUtilities {
             }
 
             // Resend any active potion effects
-            for (PotionEffect potionEffect : player.getActivePotionEffects()) {
-                Object mobEffect = ReflectionManager.createMobEffect(potionEffect);
+            for (Object potionEffect : player.getActivePotionEffects()) {
                 sendSelfPacket(player,
-                        manager.createPacketConstructor(PacketType.Play.Server.ENTITY_EFFECT, player.getEntityId(), mobEffect)
-                                .createPacket(player.getEntityId(), mobEffect));
+                        manager.createPacketConstructor(PacketType.Play.Server.ENTITY_EFFECT, player.getEntityId(), potionEffect)
+                                .createPacket(player.getEntityId(), potionEffect));
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -933,7 +918,7 @@ public class DisguiseUtilities {
         final PacketContainer[] delayed = transformed == null ? null : transformed[1];
         try {
             if (packets == null) {
-                packets = new PacketContainer[] { packet };
+                packets = new PacketContainer[]{packet};
             }
             for (PacketContainer p : packets) {
                 p = p.deepClone();

@@ -1,14 +1,9 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import java.lang.reflect.Method;
-
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Guardian;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.Skeleton;
-import org.bukkit.entity.Zombie;
+import org.bukkit.entity.*;
+
+import java.lang.reflect.Method;
 
 public enum DisguiseType {
     ARMOR_STAND(78),
@@ -158,27 +153,27 @@ public enum DisguiseType {
             try {
                 DisguiseType toUse = type;
                 switch (type) {
-                // Disguise item frame isn't supported. So we don't give it a entity type which should prevent it from being..
-                // Usable.
-                case ITEM_FRAME:
-                    break;
-                case DONKEY:
-                case MULE:
-                case UNDEAD_HORSE:
-                case SKELETON_HORSE:
-                    toUse = DisguiseType.HORSE;
-                    break;
-                case ZOMBIE_VILLAGER:
-                    toUse = DisguiseType.ZOMBIE;
-                    break;
-                case WITHER_SKELETON:
-                    toUse = DisguiseType.SKELETON;
-                    break;
-                case ELDER_GUARDIAN:
-                    toUse = DisguiseType.GUARDIAN;
-                    break;
-                default:
-                    break;
+                    // Disguise item frame isn't supported. So we don't give it a entity type which should prevent it from being..
+                    // Usable.
+                    case ITEM_FRAME:
+                        break;
+                    case DONKEY:
+                    case MULE:
+                    case UNDEAD_HORSE:
+                    case SKELETON_HORSE:
+                        toUse = DisguiseType.HORSE;
+                        break;
+                    case ZOMBIE_VILLAGER:
+                        toUse = DisguiseType.ZOMBIE;
+                        break;
+                    case WITHER_SKELETON:
+                        toUse = DisguiseType.SKELETON;
+                        break;
+                    case ELDER_GUARDIAN:
+                        toUse = DisguiseType.GUARDIAN;
+                        break;
+                    default:
+                        break;
                 }
                 type.setEntityType(EntityType.valueOf(toUse.name()));
             } catch (Throwable ex) {
@@ -207,44 +202,44 @@ public enum DisguiseType {
     public static DisguiseType getType(Entity entity) {
         DisguiseType disguiseType = getType(entity.getType());
         switch (disguiseType) {
-        case ZOMBIE:
-            try {
-                if ((Boolean) isVillager.invoke(entity)) {
-                    disguiseType = DisguiseType.ZOMBIE_VILLAGER;
+            case ZOMBIE:
+                try {
+                    if ((Boolean) isVillager.invoke(entity)) {
+                        disguiseType = DisguiseType.ZOMBIE_VILLAGER;
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            break;
-        case HORSE:
-            try {
-                Object variant = getVariant.invoke(entity);
-                disguiseType = DisguiseType.valueOf(((Enum) variant).name());
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            break;
-        case SKELETON:
-            try {
-                Object type = getSkeletonType.invoke(entity);
-                if (type == Skeleton.SkeletonType.WITHER) {
-                    disguiseType = DisguiseType.WITHER_SKELETON;
+                break;
+            case HORSE:
+                try {
+                    Object variant = getVariant.invoke(entity);
+                    disguiseType = DisguiseType.valueOf(((Enum) variant).name());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            break;
-        case GUARDIAN:
-            try {
-                if ((Boolean) isElder.invoke(entity)) {
-                    disguiseType = DisguiseType.ELDER_GUARDIAN;
+                break;
+            case SKELETON:
+                try {
+                    Object type = getSkeletonType.invoke(entity);
+                    if (type == Skeleton.SkeletonType.WITHER) {
+                        disguiseType = DisguiseType.WITHER_SKELETON;
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            break;
-        default:
-            break;
+                break;
+            case GUARDIAN:
+                try {
+                    if ((Boolean) isElder.invoke(entity)) {
+                        disguiseType = DisguiseType.ELDER_GUARDIAN;
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                break;
+            default:
+                break;
         }
         return disguiseType;
     }
@@ -265,14 +260,14 @@ public enum DisguiseType {
         for (int i = 0; i < ints.length; i++) {
             int value = ints[i];
             switch (i) {
-            case 0:
-                entityId = value;
-                break;
-            case 1:
-                defaultId = value;
-                break;
-            default:
-                break;
+                case 0:
+                    entityId = value;
+                    break;
+                case 1:
+                    defaultId = value;
+                    break;
+                default:
+                    break;
             }
         }
     }

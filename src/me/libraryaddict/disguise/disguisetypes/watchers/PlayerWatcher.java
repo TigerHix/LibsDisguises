@@ -1,19 +1,16 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Player;
-
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
-
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.ReflectionManager.LibVersion;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
 
 public class PlayerWatcher extends LivingWatcher {
     private boolean isInBed;

@@ -1,37 +1,25 @@
 package me.libraryaddict.disguise;
 
+import me.libraryaddict.disguise.disguisetypes.*;
+import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
+import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.ReflectionManager;
+import org.bukkit.DyeColor;
+import org.bukkit.Material;
+import org.bukkit.entity.*;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.HorseInventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-
-import me.libraryaddict.disguise.disguisetypes.AnimalColor;
-import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
-import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
-import me.libraryaddict.disguise.disguisetypes.MobDisguise;
-import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
-import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
-import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
-import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.ReflectionManager;
-
-import org.bukkit.DyeColor;
-import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.inventory.HorseInventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 
 public class DisguiseAPI {
 
@@ -90,7 +78,7 @@ public class DisguiseAPI {
                             int firstCapitalWatcher = firstCapital(watcherMethod.getName());
                             if (firstCapitalWatcher > 0
                                     && method.getName().substring(firstCapitalMethod)
-                                            .equalsIgnoreCase(watcherMethod.getName().substring(firstCapitalWatcher))) {
+                                    .equalsIgnoreCase(watcherMethod.getName().substring(firstCapitalWatcher))) {
                                 Class methodParam = watcherMethod.getParameterTypes()[0];
                                 if (methodParam == float.class || methodParam == Float.class || methodParam == Double.class) {
                                     methodParam = double.class;

@@ -1,7 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Ocelot.Type;
 

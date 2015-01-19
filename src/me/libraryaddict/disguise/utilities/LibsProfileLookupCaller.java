@@ -1,7 +1,6 @@
 package me.libraryaddict.disguise.utilities;
 
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
-
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.ProfileLookupCallback;
 
